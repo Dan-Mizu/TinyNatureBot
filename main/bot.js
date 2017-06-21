@@ -12,7 +12,7 @@ var loop;
 var tweetScene;
 
 function getRandomInt(min, max) {
-    intRandom = Math.floor(Math.random() * (max - min + 1)) + min;
+     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 var time; //Day, Night
@@ -58,8 +58,7 @@ function tweetNature() {
     console.log('__\n >New Nature Tweet\n');
 
     // Set Time of Day
-    getRandomInt(0, 1);
-    if (intRandom == 0) {
+    if (getRandomInt(0, 1) == 0) {
         time = 'Day';
     } else {
         time = 'Night';
@@ -67,8 +66,7 @@ function tweetNature() {
 
     // Set Moon Phase
     if (time == 'Night') {
-        getRandomInt(0, 7);
-        var moonPhase = intRandom;
+        var moonPhase = getRandomInt(0, 7);
     }
 
     console.log('-Time of Day: ' + time);
@@ -78,7 +76,7 @@ function tweetNature() {
 
     // Set Weather
     if (time == 'Day') {
-        getRandomInt(0, 99);
+        intRandom = getRandomInt(0, 99);
         if (intRandom >= 95) {
             weather = 'Thunder';
         } else if (intRandom >= 74) {
@@ -95,7 +93,7 @@ function tweetNature() {
     console.log('\n-Weather: ' + weather);
 
     // Set Habitat
-    getRandomInt(0, 99);
+    intRandom = getRandomInt(0, 99);
     if (intRandom == 99) {
         habitat = 'Sunflower';
     } else if (intRandom >= 98) {
@@ -125,58 +123,61 @@ function tweetNature() {
     var cloudAmt;
     if (time == 'Day') {
         if (weather == 'Clear') {
-            getRandomInt(0, 3);
-            cloudAmt = intRandom;
+            cloudAmt = getRandomInt(0, 3);
             loop = 0;
             while (loop <= cloudAmt) {
-                getRandomInt(0, 13);
-                tweetScene[intRandom] = tweetScene[intRandom].replace(/air/g, eCloud);
-                loop += 1;
+                intRandom = getRandomInt(0, 13);
+                if (tweetScene[intRandom] == 'air') {
+                    tweetScene[intRandom] = tweetScene[intRandom].replace(/air/g, eCloud);
+                    loop += 1;
+                }
             }
         } else if (weather == 'Rain') {
-            getRandomInt(0, 5);
-            cloudAmt = intRandom;
+            cloudAmt = getRandomInt(0, 5);
             loop = 0;
             while (loop <= cloudAmt) {
-                getRandomInt(0, 13);
-                tweetScene[intRandom] = tweetScene[intRandom].replace(/air/g, eCloudRain);
-                loop += 1;
+                intRandom = getRandomInt(0, 13);
+                if (tweetScene[intRandom] == 'air') {
+                    tweetScene[intRandom] = tweetScene[intRandom].replace(/air/g, eCloudRain);
+                    loop += 1;
+                }
             }
         } else if (weather == 'Thunder') {
-            getRandomInt(0, 5);
-            cloudAmt = intRandom;
+            cloudAmt = getRandomInt(0, 5);
             loop = 0;
             while (loop <= cloudAmt) {
-                getRandomInt(0, 13);
-                tweetScene[intRandom] = tweetScene[intRandom].replace(/air/g, eCloudThunder);
-                loop += 1;
+                intRandom = getRandomInt(0, 13);
+                if (tweetScene[intRandom] == 'air') {
+                    tweetScene[intRandom] = tweetScene[intRandom].replace(/air/g, eCloudThunder);
+                    loop += 1;
+                }
             }
         } else if (weather == 'Snow') {
-            getRandomInt(0, 6);
-            cloudAmt = intRandom;
+            cloudAmt = getRandomInt(0, 6);
             loop = 0;
             while (loop <= cloudAmt) {
-                getRandomInt(0, 13);
-                tweetScene[intRandom] = tweetScene[intRandom].replace(/air/g, eCloudSnow);
-                loop += 1;
+                intRandom = getRandomInt(0, 13);
+                if (tweetScene[intRandom] == 'air') {
+                    tweetScene[intRandom] = tweetScene[intRandom].replace(/air/g, eCloudSnow);
+                    loop += 1;
+                }
             }
         } else {
             throw new Error("Incorrect Weather value");
         }
     } else if (time == 'Night') {
-        getRandomInt(0, 3);
-        var starAmt = intRandom;
+        var starAmt = getRandomInt(0, 3);
         loop = 0;
         while (loop <= starAmt) {
             getRandomInt(0, 99);
             if (intRandom >= 95) {
-                getRandomInt(0, 13);
+                intRandom = getRandomInt(0, 13);
                 tweetScene[intRandom] = tweetScene[intRandom].replace(/air/g, eCommet);
             } else if (intRandom >= 74) {
-                getRandomInt(0, 13);
+                intRandom = getRandomInt(0, 13);
                 tweetScene[intRandom] = tweetScene[intRandom].replace(/air/g, eSparkle);
             } else if (intRandom >= 0) {
-                getRandomInt(0, 13);
+                intRandom = getRandomInt(0, 13);
                 tweetScene[intRandom] = tweetScene[intRandom].replace(/air/g, eStar);
             }
             loop += 1;
@@ -188,7 +189,7 @@ function tweetNature() {
     // Place Sun/Moon
     if (time == 'Day') {
         if (weather == 'Clear') {
-            getRandomInt(0, 6);
+            intRandom = getRandomInt(0, 6);
             if (cloudAmt == 2) {
                 tweetScene[intRandom] = tweetScene[intRandom].replace(/air/g, eSunCloudSmall);
             } else if (cloudAmt == 3) {
@@ -197,76 +198,71 @@ function tweetNature() {
                 tweetScene[intRandom] = tweetScene[intRandom].replace(/air/g, eSun);
             }
         } else if (weather == 'Snow') {
-            getRandomInt(0, 6);
+            intRandom = getRandomInt(0, 6);
             tweetScene[intRandom] = tweetScene[intRandom].replace(/air/g, eSunCloudBig);
         } else {
-            getRandomInt(0, 6);
+            intRandom = getRandomInt(0, 6);
             tweetScene[intRandom] = tweetScene[intRandom].replace(/air/g, eSunCloudRain);
         }
     } else if (time == 'Night') {
-        getRandomInt(0, 6);
+        intRandom = getRandomInt(0, 6);
         tweetScene[intRandom] = tweetScene[intRandom].replace(/air/g, eMoon[moonPhase]);
     }
 
     // Set Plants/Beach
     if (habitat == 'Oak' || habitat == 'Pine') {
-        getRandomInt(0, 3);
-        var plantAmt = intRandom;
+        var plantAmt = getRandomInt(0, 3);
         loop = 0;
         while (loop <= plantAmt) {
-            getRandomInt(0, 99);
+            intRandom = getRandomInt(0, 99);
             if (intRandom >= 60) {
-                getRandomInt(21, 34);
+                intRandom = getRandomInt(21, 34);
                 tweetScene[intRandom] = tweetScene[intRandom].replace(/ground/g, eSapling);
             } else if (intRandom >= 0) {
-                getRandomInt(21, 34);
+                intRandom = getRandomInt(21, 34);
                 tweetScene[intRandom] = tweetScene[intRandom].replace(/ground/g, eFern);
             }
             loop += 1;
         }
     } else if (habitat == 'Palm') {
-        getRandomInt(0, 9);
-        var palmAmt = intRandom;
+        var palmAmt = getRandomInt(0, 9);
         loop = 0;
         while (loop <= palmAmt) {
-            getRandomInt(21, 34);
+            intRandom = getRandomInt(21, 34);
             tweetScene[intRandom] = tweetScene[intRandom].replace(/ground/g, ePalmTree);
             loop += 1;
         }
-        getRandomInt(0, 2);
-        var beachAmt = intRandom;
+        var beachAmt = getRandomInt(0, 2);
         loop = 0;
         while (loop <= beachAmt) {
-            getRandomInt(0, 99);
+            intRandom = getRandomInt(0, 99);
             if (intRandom >= 80) {
-                getRandomInt(21, 34);
+                intRandom = getRandomInt(21, 34);
                 tweetScene[intRandom] = tweetScene[intRandom].replace(/ground/g, eCrab);
             } else if (intRandom >= 0) {
-                getRandomInt(21, 34);
+                intRandom = getRandomInt(21, 34);
                 tweetScene[intRandom] = tweetScene[intRandom].replace(/ground/g, eShell);
             }
             loop += 1;
         }
     } else if (habitat == 'Flower') {
-        getRandomInt(0, 9);
-        var flowerAmt = intRandom;
+        var flowerAmt = getRandomInt(0, 9);
         loop = 0;
         while (loop <= flowerAmt) {
-            getRandomInt(21, 34);
+            intRandom = getRandomInt(21, 34);
             tweetScene[intRandom] = tweetScene[intRandom].replace(/ground/g, eRose);
             loop += 1;
         }
     } else if (habitat == 'Blossom') {
-        getRandomInt(0, 9);
-        var blossomAmt = intRandom;
+        var blossomAmt = getRandomInt(0, 9);
         loop = 0;
         while (loop <= blossomAmt) {
-            getRandomInt(0, 99);
+            intRandom = getRandomInt(0, 99);
             if (intRandom >= 80) {
-                getRandomInt(21, 34);
+                intRandom = getRandomInt(21, 34);
                 tweetScene[intRandom] = tweetScene[intRandom].replace(/ground/g, eHibiscus);
             } else if (intRandom >= 0) {
-                getRandomInt(21, 34);
+                intRandom = getRandomInt(21, 34);
                 tweetScene[intRandom] = tweetScene[intRandom].replace(/ground/g, eCherryBlossom);
             }
             loop += 1;
