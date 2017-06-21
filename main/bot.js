@@ -305,7 +305,7 @@ function tweetInfo(err, data, response) {
     if (err) {
         console.log('\n >Error Tweeting.\n');
     } else {
-        console.log('\n >Successfully Tweeted:\n' + tweetScene.replace(/,/g, '') + '\n__\n');
+        console.log('\n >Successfully Tweeted:\n' + tweetScene.replace(/,/g, '').replace(/"     "/g, '') + '\n__\n');
         startTimer();
     }
 }
