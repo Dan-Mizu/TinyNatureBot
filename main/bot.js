@@ -52,6 +52,9 @@ var eHibiscus = '🌺'; //Blossom
 var eSunflower = '🌻'; //SunFlower
 //
 
+var cloudAmt;
+var starAmt;
+
 tweetNature();
 function tweetNature() {
 
@@ -67,11 +70,6 @@ function tweetNature() {
     // Set Moon Phase
     if (time == 'Night') {
         var moonPhase = getRandomInt(0, 7);
-    }
-
-    console.log('-Time of Day: ' + time);
-    if (time == 'Night') {
-        console.log('-Moon Phase: ' + eMoon[moonPhase] + "( ${moonPhase} )");
     }
 
     // Set Weather
@@ -90,8 +88,6 @@ function tweetNature() {
         weather = 'Clear';
     }
 
-    console.log('\n-Weather: ' + weather);
-
     // Set Habitat
     intRandom = getRandomInt(0, 99);
     if (intRandom == 99) {
@@ -108,8 +104,6 @@ function tweetNature() {
         habitat = 'Oak';
     }
 
-    console.log('\n-Habitat: ' + habitat);
-
     tweetScene =
         [
             'air', 'air', 'air', 'air', 'air', 'air', 'air',
@@ -120,7 +114,6 @@ function tweetNature() {
         ]
 
     // Place Clouds/Stars
-    var cloudAmt;
     if (time == 'Day') {
         if (weather == 'Clear') {
             cloudAmt = getRandomInt(0, 3);
@@ -166,7 +159,7 @@ function tweetNature() {
             throw new Error("Incorrect Weather value");
         }
     } else if (time == 'Night') {
-        var starAmt = getRandomInt(0, 3);
+        starAmt = getRandomInt(0, 3);
         loop = 0;
         while (loop <= starAmt) {
             getRandomInt(0, 99);
@@ -289,6 +282,19 @@ function tweetNature() {
         tweetScene = tweetScene.replace(/ground/g, eSunflower);
     }
     tweetScene = tweetScene.replace(/air/g, eAir);
+
+    // Console Feedback
+    console.log('-Time of Day: ' + time);
+    if (time == 'Night') {
+        console.log('-Moon Phase: ' + eMoon[moonPhase] + '(' + moonPhase + ')');
+    }
+    console.log('\n-Weather: ' + weather);
+    console.log('\n-Habitat: ' + habitat);
+    if (time == 'Day') {
+        console.log('\n' + eCloud + 'Cloud Amount: ' + cloudAmt);
+    } else if (time == 'Night') {
+        console.log('\n' + eStar + 'Star Amount: ' + starAmt);
+    }
 
     // Tweet Command
     T.post('statuses/update', { status: tweetScene.replace(/,/g, '') }, tweetInfo);
