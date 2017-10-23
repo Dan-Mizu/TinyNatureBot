@@ -3,11 +3,13 @@
 ([@tinynaturebot](https://twitter.com/tinynaturebot))
 a twitter bot that tweets out tiny bits of nature every hour
 
+<p align="center">
 🌓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⭐<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⭐&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>                
-                                   
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⭐&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br>
 🌳🌱🌳🌳🌳🌿🌳<br>
 🌳🌳🌳🌳🌳🌳🌿
+</p>
 
 <h3>some cool details about the bot:</h3>
 <span style="text-decoration: underline;">each tweet has randomly determined:</span>
