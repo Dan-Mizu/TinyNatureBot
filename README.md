@@ -22,9 +22,9 @@ a twitter bot that tweets out tiny bits of nature every hour
 
 3. 🌲 habitat (forests, beach, flower fields)
 
-if ☀ time, random ☁s are placed
+if ☀ time, random ☁s are placed<br>
 if 🌕 time, place random ⭐s
 
 theres also several rare events, such as comets showing up at night, beaches, or even sunflower fields
 
-<font size="2">i hope you got what you're looking for whether it was to learn about my bot, how to set up a bot, or whatever  :)</font>
+<p><font size="2">i hope you got what you're looking for whether it was to learn about my bot, how to set up a bot, or whatever  :)</font></p>
