@@ -1,7 +1,9 @@
 # TinyNatureBot
 
+<p align="center">
 ([@tinynaturebot](https://twitter.com/tinynaturebot))
 a twitter bot that tweets out tiny bits of nature every hour
+</p>
 
 <p align="center">
 🌓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⭐<br>
