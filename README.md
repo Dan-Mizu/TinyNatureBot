@@ -1,7 +1,7 @@
 # TinyNatureBot
 
 <p align="center">
-([@tinynaturebot](https://twitter.com/tinynaturebot))
+<a href='https://twitter.com/tinynaturebot'>@tinynaturebot</a>
 a twitter bot that tweets out tiny bits of nature every hour
 </p>
 
