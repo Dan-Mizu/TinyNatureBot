@@ -6,7 +6,7 @@ a twitter bot that tweets out tiny bits of nature every hour
 🌓          ⭐
      ⭐                         
                                    
-🌳🌱🌳🌳🌳🌿🌳
+🌳🌱🌳🌳🌳🌿🌳<br>
 🌳🌳🌳🌳🌳🌳🌿
 
 <h3>some cool details about the bot:</h3>
