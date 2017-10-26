@@ -1,12 +1,119 @@
-﻿// Imports
+// Imports
 var readline = require('readline');
 var Twit = require('twit');
+var dateFormat = require('dateformat');
 var config = require('./config');
 var T = new Twit(config);
 
-// Main
-console.log('**\nTiny Nature Bot Init\n**\n');
+var loopN = 1;
 
+//Scene
+var tweetScene =
+        [
+            'celestial', 'air', 'air', 'air', 'air', 'air', 'air',
+            'air', 'air', 'air', 'air', 'air', 'air', 'air',
+            'ground', 'ground', 'ground', 'ground', 'ground', 'ground', 'ground',
+            'ground', 'ground', 'ground', 'ground', 'ground', 'ground', 'ground',
+            'ground', 'ground', 'ground', 'ground', 'ground', 'ground', 'ground'
+        ];
+
+//Emojis
+var eAir = '     ';
+var eRare = ['☄️', '🍀' ];
+
+var eMoon = ['🌑', '🌘', '🌗', '🌖', '🌕', '🌔', '🌓', '🌒'];
+var eNight = ['⭐', '✨'];
+var eDay = ['☀', '🌤', '⛅', '🌦️', '☁', '🌧️', '⛈️', '🌨️', '❄️'];
+
+var eTree = ['🌳', '🌲', '🌱', '🌴', '🌵', '🌊'];
+var eGround = ['🌿', '🌾', '☘️', '🍂', '🍃', '🍄'];
+var eFlower = ['🌷', '🌹', '🌼', '🌸', '🌺', '🌻'];
+
+var eForest = ['🦉', '🐿️', '🐇', '🦋', '🐛', '🐝', '🐞', '🦗'];
+var ePrairie = ['🐂', '🐏', '🐑', '🐐', '🐄', '🐖', '🐓', '🦃'];
+var eSavannah = [];
+var eTundra = [];
+var eMeadow = [];
+var eSoil = [];
+var eBeach = [];
+var eDesert = [];
+var eOcean = [];
+
+// Main
+console.log (
+    '********** Tiny Nature Bot v2 Init **********\n'
+);
+
+//Random Integer Generator
+function getRandomInt(min, max) {
+    min -= 1;
+    max -= 1;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+//Loop Starter and Handler
+function startLoop(loopTime) {
+    createNature();
+    var bufferTime = loopTime;
+    var bufferAmount = 0;
+    process.stdout.write('Loop Timer: ' + bufferTime);
+    var countdownTimer = setInterval(function () {
+        readline.cursorTo(process.stdout, 0);
+        bufferTime -= 1;
+        process.stdout.write('Loop Timer: ' + bufferTime);
+        bufferAmount += 1;
+
+        if (bufferTime <= 0) {
+            clearInterval(countdownTimer);
+            readline.clearLine(process.stdout);
+            readline.cursorTo(process.stdout, 0);
+            console.log('Buffer Time: ' + bufferAmount + '\n\n\n');
+            loopN += 1;
+            startLoop(loopTime);
+        }
+    }, 1000);
+}
+
+//BEGIN LOOP
+startLoop(30);
+
+function createNature() {
+    var time = [ 'Day', 'Night' ]
+    var weather = [ 'Clear', 'Rain', 'Thunder', 'Snow' ]
+    var habitat = [ 'Forest', 'Prairie', 'Savannah', 'Tundra', 'Meadow', 'Soil', 'Beach', 'Desert', 'Ocean' ]
+
+    time = time[getRandomInt(2, time.length)];
+    weather = weather[getRandomInt(1, weather.length)];
+    habitat = habitat[getRandomInt(1, habitat.length)];
+
+    if (time == 'Night') {var moonPhase = getRandomInt(1, eMoon.length);}
+
+    var now = new Date();
+    console.log (
+        '....................' + '\n' +
+        '>Loop Number: ' + loopN + '\n' +
+        '>Timestamp: ' + dateFormat(now, "dddd, mmmm dS, yyyy, h:MM:ss TT") + '\n' +
+        '====================' + '\n' +
+        '-Time of Day: ' + time
+        );
+    if (time == 'Night') {console.log('-Moon Phase: ' + eMoon[moonPhase] + ' (' + (moonPhase + 1) + ')');}
+    console.log(
+        '\n-Weather: ' + weather + '\n' +
+        '\n-Habitat: ' + habitat + '\n' +
+        '====================' + '\n' +
+        '....................' + '\n'
+        );
+
+    /*
+    if (time == 'Day') {
+        console.log('\n' + eCloud + 'Cloud Amount: ' + cloudAmt);
+    } else if (time == 'Night') {
+        console.log('\n' + eStar + 'Star Amount: ' + starAmt);
+    }
+    */
+}
+
+/*
 var intRandom;
 var loop;
 var tweetScene;
@@ -19,14 +126,14 @@ var time; //Day, Night
 var weather; //Clear 50%, Rain 25%, Thunder 5%, Snow 20%
 var habitat; //Oak 55%, Pine 30%, Palm 10%, Sunflower 1%, Blossom 1%, Flower 3%
 
-//
+// Sky
 var eAir = '     ';
 
 var eSun = '☀';
 var eSunCloudSmall = '🌤';
 var eSunCloudBig = '⛅';
 
-var eMoon = ['🌑', '🌘', '🌗', '🌖', '🌒', '🌓', '🌔', '🌕']
+var eMoon = ['🌑', '🌘', '🌗', '🌖', '🌕', '🌔', '🌓', '🌒']
 var eStar = '⭐'; // 70%
 var eSparkle = '✨'; // 25%
 var eCommet = '☄️'; // 5%
@@ -36,21 +143,89 @@ var eSunCloudRain = '🌦️'; //Rain
 var eCloudRain = '🌧️'; //Rain
 var eCloudThunder = '⛈️'; //Thunder
 var eCloudSnow = '🌨️'; //Snow
+var eSnowflake = '❄️'; //Snow
 
 var eOakTree = '🌳';
 var ePineTree = '🌲';
+var eCactus = '🌵';
 var ePalmTree = '🌴';
-var eShell = '🐚';
-var eCrab = '🦀';
 var eSapling = '🌱';
 var eFern = '🌿';
+var eLeaf = '🍂';
+var eLeaves = '🍃';
+var eRice = '🌾';
+var eMushroom = '🍄';
+var eShamrock = '☘️';
+var eClover = '🍀';
+var eWave = '🌊';
 var eTulip = '🌷'; //Flower
 var eRose = '🌹'; //Flower
 var eBlossom = '🌼'; //Blossom
 var eCherryBlossom = '🌸'; //Blossom
 var eHibiscus = '🌺'; //Blossom
 var eSunflower = '🌻'; //SunFlower
-//
+
+//Beach
+var eCrab = '🦀';
+var eShell = '🐚';
+var eTurtle = '🐢';
+
+//Ocean
+var eWhale = '🐋';
+var eDolphin = '🐬';
+var eShark = '🦈';
+var eOctopus = '🐙';
+var eSquid = '🦑';
+var eBlowfish = '🐡';
+var eFish = '🐟';
+var eTropicalFish = '🐠';
+var eShrimp = '🦐';
+
+//Savannah
+var eTiger = '🐅';
+var eLeopard = '🐆';
+var eElephant = '🐘';
+var eWaterBuffalo = '🐃';
+var eZebra = '🦓';
+var eGiraffe = '🦒';
+
+//Grassland
+var eOx = '🐂';
+var eRam = '🐏';
+var eSheep = '🐑';
+var eGoat = '🐐';
+var eCow = '🐄';
+var ePig = '🐖';
+var eRooster = '🐓';
+var eTurkey = '🦃';
+
+//Tundra
+var eSnowman = '⛄';
+
+//Sky
+var eEagle = '🦅';
+
+//Forest
+var eOwl = '🦉';
+var eChipmunk = '🐿️';
+var eRabbit = '🐇';
+var eButterfly = '🦋';
+var eCaterpillar = '🐛';
+var eBee = '🐝';
+var eLadybug = '🐞';
+var eCricket = '🦗';
+
+//Marsh/Desert
+var eSnail = '🐌';
+var eAnt = '🐜';
+var eSpider = '🕷️';
+var eDuck = '🦆';
+
+var eCrocodile = '🐊';
+var eLizard = '🦎';
+var eSnake = '🐍';
+var eScorpion = '🦂';
+var eCamel = '🐫';
 
 var cloudAmt;
 var starAmt;
@@ -329,3 +504,4 @@ function startTimer() {
         }
     }, 1000);
 }
+*/
