@@ -5,39 +5,47 @@ var dateFormat = require('dateformat');
 var config = require('./config');
 var T = new Twit(config);
 
+var holiday = 'default';
 var loopN = 1;
 
-//Scene
+//Holiday Detection
+if (Date.getMonth() == 4) {
+	holiday = 'pride';
+}
+
+// Scene
 var tweetScene =
         [
-            'celestial', 'air', 'air', 'air', 'air', 'air', 'air',
             'air', 'air', 'air', 'air', 'air', 'air', 'air',
+            'air', 'air', 'air', 'air', 'air', 'air', 'air',
+			'air', 'air', 'air', 'air', 'air', 'air', 'air',
             'ground', 'ground', 'ground', 'ground', 'ground', 'ground', 'ground',
             'ground', 'ground', 'ground', 'ground', 'ground', 'ground', 'ground',
+			'ground', 'ground', 'ground', 'ground', 'ground', 'ground', 'ground',
             'ground', 'ground', 'ground', 'ground', 'ground', 'ground', 'ground'
         ];
 
-//Emojis
-var eAir = '     ';
-var eRare = ['☄️', '🍀' ];
+// Emojis
+let eAir = '     ';
+let eRare = ['☄️', '🍀' ];
 
-var eMoon = ['🌑', '🌘', '🌗', '🌖', '🌕', '🌔', '🌓', '🌒'];
-var eNight = ['⭐', '✨'];
-var eDay = ['☀', '🌤', '⛅', '🌦️', '☁', '🌧️', '⛈️', '🌨️', '❄️'];
+let eMoon = ['🌑', '🌘', '🌗', '🌖', '🌕', '🌔', '🌓', '🌒'];
+let eNight = ['⭐', '✨'];
+let eDay = ['☀', '🌤', '⛅', '🌦️', '☁', '🌧️', '⛈️', '🌨️', '❄️'];
 
-var eTree = ['🌳', '🌲', '🌱', '🌴', '🌵', '🌊'];
-var eGround = ['🌿', '🌾', '☘️', '🍂', '🍃', '🍄'];
-var eFlower = ['🌷', '🌹', '🌼', '🌸', '🌺', '🌻'];
+let eTree = ['🌳', '🌲', '🌱', '🌴', '🌵', '🌊'];
+let eGround = ['🌿', '🌾', '☘️', '🍂', '🍃', '🍄'];
+let eFlower = ['🌷', '🌹', '🌼', '🌸', '🌺', '🌻'];
 
-var eForest = ['🦉', '🐿️', '🐇', '🦋', '🐛', '🐝', '🐞', '🦗'];
-var ePrairie = ['🐂', '🐏', '🐑', '🐐', '🐄', '🐖', '🐓', '🦃'];
-var eSavannah = ['🐅', '🐆', '🐘', '🐃', '🦓', '🦒'];
-var eTundra = ['⛄'];
-var eMeadow = ['🐛', '🐝', '🐞', '🦗', '🐌'];
-var eSoil = ['🐌', '🐛', '🐝', '🐞', '🦗', '🐜', '🕷️'];
-var eBeach = ['🦀', '🐚', '🐢'];
-var eDesert = ['🐊', '🦎', '🐍', '🦂', '🐫'];
-var eOcean = ['🐋', '🐬', '🦈', '🐙', '🦑', '🐡', '🐟', '🐠', '🦐'];
+let eForest = ['🦉', '🐿️', '🐇', '🦋', '🐛', '🐝', '🐞', '🦗'];
+let ePrairie = ['🐂', '🐏', '🐑', '🐐', '🐄', '🐖', '🐓', '🦃'];
+let eSavannah = ['🐅', '🐆', '🐘', '🐃', '🦓', '🦒'];
+let eTundra = ['⛄'];
+let eMeadow = ['🐛', '🐝', '🐞', '🦗', '🐌'];
+let eSoil = ['🐌', '🐛', '🐝', '🐞', '🦗', '🐜', '🕷️'];
+let eBeach = ['🦀', '🐚', '🐢'];
+let eDesert = ['🐊', '🦎', '🐍', '🦂', '🐫'];
+let eOcean = ['🐋', '🐬', '🦈', '🐙', '🦑', '🐡', '🐟', '🐠', '🦐'];
 
 // Main
 console.log (
@@ -82,7 +90,7 @@ function createNature() {
     var weather = [ 'Clear', 'Rain', 'Thunder', 'Snow' ]
     var habitat = [ 'Forest', 'Prairie', 'Savannah', 'Tundra', 'Meadow', 'Soil', 'Beach', 'Desert', 'Ocean' ]
 
-    time = time[getRandomInt(2, time.length)];
+    time = time[getRandomInt(1, time.length)];
     weather = weather[getRandomInt(1, weather.length)];
     habitat = habitat[getRandomInt(1, habitat.length)];
 
