@@ -4,3 +4,5 @@
 #Twit npm
 main/node_modules/*
 main/config.js
+main/config-test.js
+.DS_Store
