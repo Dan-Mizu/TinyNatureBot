@@ -1,9 +1,17 @@
-#Visual Studio Files
+#visual studio files
 .vs/*
 
-#Twit npm
-main/node_modules/*
+#npm/nodejs
+main/node_modules
+main/package-lock.jsoon
+
+#twit
 main/config.js
 main/config-test.js
-.DS_Store
 main/config-main.js
+
+#heroku
+main/Procfile
+
+#other
+.DS_Store

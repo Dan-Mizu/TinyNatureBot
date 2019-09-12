@@ -1,8 +1,7 @@
-// imports
+﻿// imports
 const readline = require('readline');
 const Twit = require('twit');
 const dateFormat = require('dateformat');
-const weighted = require('weighted')
 //var config = require('./config');
 //var T = new Twit(config); //@tinynaturebot config file (my twitter bot's account keys are in this file. use yours when replicating. i provide the config-default.js file to fill in.)
 const config = require('./config');
@@ -10,13 +9,17 @@ var T = new Twit(config); // test config (when i want to test my bot without usi
 
 //
 // tinynaturebot - creative project by danny baghdadi
-// v.1.2 - *scene has been enlarged, due to twitter limit increasing. now 7x7. (might revert, or change dependant on reception.) *animals added to the scenes *a ton more habitats added *randomability of emojis are weighted now. *more rare events added// v0.4 twitter bot that tweets out tiny bits of nature every hour *scene influenced by time, weather, and habitat. *scene size is 7x4 *rare habitats and events included. 
+// v.1.2 - *scene has been enlarged due to twitter limit increasing. now 7x7. (might revert, or change dependant on reception.) *animals added to the scenes *ton more habitats added *ton more rare events added // v0.4 twitter bot that tweets out tiny bits of nature every hour *scene influenced by time, weather, and habitat. *scene size is 7x4 *rare habitats and events included. 
 // (i tried to make this as annotated as possible. i am a bud in bot programming but i am slowly growing and still want to share a lot of my projects openly so that others can replicate it. made with NodeJS.)
 //
 
+//
 // global variables
+//
 var loopN = 1;
 var tweetScene = [];
+var rowNum = 7; //number of rows in 'tweetScene'
+var columnNum = 7; //number of columns in 'tweetScene'
 var time = [];
 var moonPhase = 0;
 var weather = [];
@@ -30,29 +33,42 @@ if (new Date().getMonth() == 4) {
 }
 */
 
+//
 // emoji arrays
+//
 let eAir = '     ';
-let eRare = ['☄️', '🍀'];
 
 let eMoon = ['🌑', '🌘', '🌗', '🌖', '🌕', '🌔', '🌓', '🌒'];
-let eSkyNight = ['⭐', '✨'];
-let eSkyDay = ['☀', '🌤', '⛅', '🌦️', '☁', '⛈️', '🌧️', '🌨️', '❄️'];
+let eSkyNight = ['⭐', '✨', '☄️'];
+let eSkyDay = ['☀', '🌤', '⛅', '🌦️', '☁', '⛈️', '🌧️', '🌨️', '❄️', '⚡'];
 
-let eTree = ['🌳', '🌲', '🌱', '🌴', '🌵', '🌊'];
-let eGround = ['🌿', '🌾', '☘️', '🍂', '🍃', '🍄'];
-let eFlower = ['🌷', '🌹', '🌼', '🌸', '🌺', '🌻'];
+let eNature = [
+    ['🌳', '🌲', '🍃'], //forest
+    ['🌿', '🌾'], //prairie
+    ['🌾'], //savannah
+    ['🏔️', '⛰️'], //tundra
+    ['🌷', '🌹', '🌼', '🌸', '🌺', '🌻', '🍂', '☘️'], //meadow
+    ['🌱', '🍂', '🍁', '🍄', '☘️', '🍀', '🌰'], //soil
+    ['🌵'], //desert
+    ['🌴','🥥', '🐚'], //beach
+    ['🌊','🏝️'] //ocean
+]
 
 var eAnimal = [
 	['🦉', '🐿️', '🐇', '🦋', '🐛', '🐝', '🐞', '🦗'], //forest
 	['🐂', '🐏', '🐑', '🐐', '🐄', '🐖', '🐓', '🦃'], //prairie
-	['🐅', '🐆', '🐘', '🐃', '🦓', '🦒'], //savannah
-    ['⛄'], //tundra
+    ['🐅', '🐆', '🐘', '🐃', '🦓', '🦒'], //savannah
+    ['⛄', '☃'], //tundra
 	['🐛', '🐝', '🐞', '🦗', '🐌'], //meadow
-	['🐌', '🐛', '🐝', '🐞', '🦗', '🐜', '🕷️'], //soil
-	['🦀', '🐚', '🐢'], //beach
-	['🐊', '🦎', '🐍', '🦂', '🐫'], //desert
+    ['🐌', '🐛', '🐝', '🐞', '🦗', '🐜', '🕷️'], //soil
+    ['🐊', '🦎', '🐍', '🦂', '🐫'], //desert
+	['🦀', '🐢'], //beach
 	['🐋', '🐬', '🦈', '🐙', '🦑', '🐡', '🐟', '🐠', '🦐'] //ocean
 ] //called like: eAnimal[0][1] which is the squirrel, or [3][0] which is the snowman.
+
+//
+// functions
+//
 
 // reset scene - (resets the 'tweetScene' and other arrays to set up for a new tweet)
 function resetScene() {
@@ -65,80 +81,88 @@ function resetScene() {
         'ground', 'ground', 'ground', 'ground', 'ground', 'ground', 'ground',
         'ground', 'ground', 'ground', 'ground', 'ground', 'ground', 'ground'
     ];
-    time = [ 'day', 'night' ];
-    weather = [ 'clear', 'cloudy', 'rain', 'thunder', 'snow' ];
-    habitat = [ 'forest', 'prairie', 'savannah', 'tundra', 'meadow', 'soil', 'beach', 'desert', 'ocean' ];
-        //'0', '1', '2', '3', '4', '5, '6',
-        //'7', '8', '9', '10', '11', '12', '13',
+        //'0',  '1',  '2',  '3',  '4',  '5',  '6',
+        //'7',  '8',  '9',  '10', '11', '12', '13',
         //'14', '15', '16', '17', '18', '19', '20',
         //'21', '22', '23', '24', '25', '26', '27',
         //'28', '29', '30', '31', '32', '33', '34',
         //'35', '36', '37', '38', '39', '40', '41',
         //'42', '43', '44', '45', '46', '47', '48'
+        
+    time = [ 'day', 'night' ];
+    weather = [ 'clear', 'cloudy', 'rain', 'thunder', 'snow' ];
+    habitat = [ 'forest', 'prairie', 'savannah', 'tundra', 'meadow', 'soil', 'desert', 'beach', 'ocean' ];
 }
 
 // random integer generator - (makes random numbers between the specified 'min' and 'max' numbers)
 function getRandomInt(min, max) {
-    min -= 1;
-    max -= 1;
-    return Math.floor(Math.random() * (max - min + 1)) + min; // the + 1 offsets it so i can just call it like array[getRandomInt(1, array.length)]. i use a 1 instead of 0. pet peeve of mine sry. 
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 // empty slot finder - (finds an empty 'air' slot in the 'tweetScene' array)
-function getEmptySlot(min, max) {
+function getEmptySlot(slottype) {
     var slot;
-    while (slot != 'air') {
-        var slotNum = getRandomInt(min, max); //randomly generated slot number for this loop
-        slot = tweetScene[slotNum]; //sets 'slot' to whatever is in that 'tweetScene' slot. we're looking for 'air'
-        if (slot == 'air')
+    while (slot != slottype) { //keep generating a random number until the slot of that number is empty.
+        var slotNum = 0;
+        if (slottype == 'air') {
+            slotNum = getRandomInt(1, 20); //slots 1-20 represent air (celestialbody is only 1 slot, so we don't need to find empty slots.)
+        } else if (slottype == 'ground') {
+            slotNum = getRandomInt(21, 48); //slots 21-48 represent ground
+        }
+        slot = tweetScene[slotNum]; //sets 'slot' to whatever is in the randomly generated slot number in 'tweetScene'.
+        if (slot == slottype) //if the slot string matches the slottype inputted, then that means that slot hasn't been replaced by an emoji and is empty.
             break;
     }
-    return slotNum;
+    return slotNum; //return the empty slot number
 }
 
 // generates a nature scene for the tweet - (sets the time, weather, and habitat. generated randomly with weights on certain emojis to create rarer events.)
 function createNature() {
-    //resets default tweet scene. size is 7x7.
+    //resets variables and default tweet scene. size is 7x7.
     resetScene();
 
     //determines time, weather, and habitat randomly
-    time = time[getRandomInt(1, time.length)];
-    weather = weather[getRandomInt(1, weather.length)];
-    habitat = habitat[getRandomInt(1, habitat.length)];
+    time = time[getRandomInt(0, time.length - 1)];
+    weather = weather[getRandomInt(0, weather.length - 1)];
+    habitat = habitat[getRandomInt(0, habitat.length - 1)];
 
     //begin tweet scene replacement
         //time + weather
-    if (time == 'day') { 
+    if (time == 'day') {
             //clear weather
         if (weather == 'clear') {
             //changes the 'celestialbody' slot in tweetScene[]
             tweetScene[0] = eSkyDay[0]; //clear sun
             //replaces 'air' spaces
-            for (i = getRandomInt(1, 3); i > 0; i--) {
+            for (i = getRandomInt(0, 3); i > 0; i--) {
                 //replace (1-3) of the 'air' spaces with a cloud
-                tweetScene[getEmptySlot(1, 21)] = eSkyDay[4]; //cloud
+                tweetScene[getEmptySlot('air')] = eSkyDay[4]; //cloud
             }
 
             //cloudy weather
-        } else if (weather = 'cloudy') {
+        } else if (weather == 'cloudy') {
             //changes the 'celestialbody' slot in tweetScene[]
-            switch (new getRandomInt(1,2)) {
+            switch (getRandomInt(1,2)) {
                 case 1: //sun
-                    tweetScene[0] = eSkyDay[getRandomInt(2,3)]; //both sunny clouds
+                    tweetScene[0] = eSkyDay[getRandomInt(1,2)]; //both sunny clouds
+                    console.log('cloudy but sun is still out: ' + eSkyDay[getRandomInt(1,2)]);
                     break;
                 case 2: //no sun
                     tweetScene[0] = eSkyDay[4]; //cloud
+                    console.log('cloudy, sun isnt out: ' + eSkyDay[4]);
             }
             //replaces 'air' spaces
             for (i = getRandomInt(3, 5); i > 0; i--) {
                 //replace (3-5) of the 'air' spaces with a cloud
-                tweetScene[getEmptySlot(1, 21)] = eSkyDay[4]; //cloud
+                tweetScene[getEmptySlot('air')] = eSkyDay[4]; //cloud
             }
 
             //rainy weather
         } else if (weather == 'rain') {
             //changes the 'celestialbody' slot in tweetScene[]
-            switch (new getRandomInt(1,2)) {
+            switch (getRandomInt(1,2)) {
                 case 1: //sun
                     tweetScene[0] = eSkyDay[3]; //rainy sun
                     break;
@@ -148,27 +172,27 @@ function createNature() {
             //replaces 'air' spaces
             for (i = getRandomInt(3, 6); i > 0; i--) {
                 //replace (3-6) of the 'air' spaces with rain clouds
-                tweetScene[getEmptySlot(1, 21)] = eSkyDay[6]; //rain cloud
+                tweetScene[getEmptySlot('air')] = eSkyDay[6]; //rain cloud
             }
 
             //thunder weather
         } else if (weather == 'thunder') {
             //changes the 'celestialbody' slot in tweetScene[]
-            tweetScene[0] = eSkyDay[getRandomInt(6,7)]; //thunder or rain cloud
+            tweetScene[0] = eSkyDay[getRandomInt(5,6)]; //thunder or rain cloud
             //replaces 'air' spaces
             for (i = getRandomInt(2, 4); i > 0; i--) {
                 //replace (2-4) of the 'air' spaces with thunder clouds
-                tweetScene[getEmptySlot(1, 21)] = eSkyDay[5]; //thunder cloud
+                tweetScene[getEmptySlot('air')] = eSkyDay[5]; //thunder cloud
             }
-            for (i = getRandomInt(1, 3); i > 0; i--) {
+            for (i = getRandomInt(0, 3); i > 0; i--) {
                 //replace (1-3) of the 'air' spaces with rain clouds
-                tweetScene[getEmptySlot(1, 21)] = eSkyDay[6]; //rain cloud
+                tweetScene[getEmptySlot('air')] = eSkyDay[6]; //rain cloud
             }
 
             //snowy weather
         } else if (weather == 'snow') {
             //changes the 'celestialbody' slot in tweetScene[]
-            switch (new getRandomInt(1,2)) {
+            switch (getRandomInt(1,2)) {
                 case 1: //sun
                     tweetScene[0] = eSkyDay[2];
                     break;
@@ -178,40 +202,107 @@ function createNature() {
             //replaces 'air' spaces
             for (i = getRandomInt(2, 4); i > 0; i--) {
                 //replace (2-4) of the 'air' spaces with snow clouds
-                tweetScene[getEmptySlot(1, 21)] = eSkyDay[7]; //snow cloud
+                tweetScene[getEmptySlot('air')] = eSkyDay[7]; //snow cloud
             }
-            for (i = getRandomInt(1, 2); i > 0; i--) {
+            for (i = getRandomInt(0, 2); i > 0; i--) {
                 //replace (1-2) of the 'air' spaces with snowflakes
-                tweetScene[getEmptySlot(1, 21)] = eSkyDay[8]; //snowflake
+                tweetScene[getEmptySlot('air')] = eSkyDay[8]; //snowflake
             }
         }
     } else if (time == 'night') {
-        moonPhase = getRandomInt(1, eMoon.length); //sets the moonphase if time has been determined as 'night'
+        moonPhase = getRandomInt(0, eMoon.length - 1); //sets the moonphase if time has been determined as 'night'
         //changes the 'celestialbody' slot in tweetScene[]
         tweetScene[0] = eMoon[moonPhase] //different emojis representing phases of the moon 'eMoon', has it's phase chosen by 'moonPhase'
         //replaces 'air' spaces
         for (i = getRandomInt(2, 3); i > 0; i--) {
             //replace (2-4) of the 'air' spaces with stars
-            tweetScene[getEmptySlot(1, 21)] = eSkyNight[0]; //star
+            tweetScene[getEmptySlot('air')] = eSkyNight[0]; //star
         }
-        for (i = getRandomInt(1, 2); i > 0; i--) {
-            //replace (1-3) of the 'air' spaces with twinkles
-            tweetScene[getEmptySlot(1, 21)] = eSkyNight[1]; //twinkle
+        if (getRandomInt(1,10) == 1) { //10% chance
+            for (i = getRandomInt(0, 2); i > 0; i--) {
+                //replace (1-3) of the 'air' spaces with twinkles
+                tweetScene[getEmptySlot('air')] = eSkyNight[1]; //twinkle
+            }
         }
-    }
-
-    //replace unused 'tweetScene' 'air' slots with actual spaces
-    for (i = 21; i > 0; i--) {
-        if (tweetScene[i] == 'air')
-            tweetScene[i] = eAir;
+        if (getRandomInt(1,100) == 1) { //1% chance
+            //replace (1-3) of the 'air' spaces with a meteor
+            tweetScene[getEmptySlot('air')] = eSkyNight[2]; //meteor
+        }
     }
 
         //habitat
+    if (habitat == 'forest') {
+        //replaces 'ground' spaces
+        //trees
+        switch (getRandomInt(1,3)) {
+            case 1: //pine forest
+                for (i = getRandomInt(8, 14); i > 0; i--) {
+                    //replace (8-14) of the 'ground' spaces with pine trees
+                    tweetScene[getEmptySlot('ground')] = eNature[0][1]; //pine tree
+                }
+                break;
+            case 2: //oak forest
+                for (i = getRandomInt(8, 14); i > 0; i--) {
+                  //replace (8-14) of the 'ground' spaces with pine trees
+                    tweetScene[getEmptySlot('ground')] = eNature[0][0]; //oak tree
+                }
+                break;
+            case 3: //both
+                for (i = getRandomInt(8, 14); i > 0; i--) {
+                    //replace (8-14) of the 'ground' spaces with pine trees
+                    tweetScene[getEmptySlot('ground')] = eNature[0][getRandomInt(0,1)]; //oak tree or pine tree
+                }
+        }
+        //falling leaves
+        if (getRandomInt(1,10) == 1) { //10% chance
+            for (i = getRandomInt(1, 3); i > 0; i--) {
+                //replace (2-4) of the 'air' spaces with stars
+                tweetScene[getEmptySlot('ground')] = eNature[0][2]; //falling leaves
+            }
+        }
+        //animals
+        if (time = 'day') { //animals that only show during the day or night
+
+        } else {
+
+        }
+    } else if (habitat == 'prairie') {
+
+    } else if (habitat == 'savannah') {
+        
+    } else if (habitat == 'tundra') {
+        
+    } else if (habitat == 'meadow') {
+        
+    } else if (habitat == 'soil') {
+        
+    } else if (habitat == 'desert') {
+        
+    } else if (habitat == 'beach') {
+        
+    } else if (habitat == 'ocean') {
+        
+    }
+
+    //add newlines every every row, replace unused 'tweetScene' slots with actual air spaces, and add spaces between emojis
+    var splicePoint = rowNum;
+    for (i = columnNum; i > 0; i--) {
+        tweetScene.splice(splicePoint, 0, "\n");
+        splicePoint += rowNum;
+    }
+    for (i = rowNum * (columnNum + 1); i >= 0; i--) { //goes through every slot until they're all replaced
+        if (tweetScene[i] == 'air' || tweetScene[i] == 'ground') { //not including 'celestialbody' because it should've been replaced, unless there was an error.
+            tweetScene[i] = eAir;
+        } else { //only add to emojis, not empty slots
+            tweetScene.splice(i, 0, "  "); //adds space between emojis
+        }
+    }
+    tweetScene = String(tweetScene);
 }
 
-// pushes 'tweetScene' as a tweet to twitter account referenced in config. - ('logTweet' is the response given to a function. great for (logging purposes))
+// pushes 'tweetScene' - (the twitter account posted to is referenced by it's keys in the config file. 'logTweet' is the response given to a function. great for (logging purposes))
 function pushTweet() {
-    //T.post('statuses/update', {status: tweetScene.replace(/,/g, '')}, logTweet);
+    T.post('statuses/update', {status: tweetScene.toString().replace(/,/g, '')}, logTweet);
 }
 
 // logs tweet - (checks for errors in tweeting
@@ -219,11 +310,12 @@ function logTweet(err, data, response) {
     if (err) { //if 'err' is true, there was an error and the console log below is sent to the log.
         console.log(
             '\n**\n' +
-            '>Error Tweeting.\n' +
-            '**\n'
+            '>Error Tweeting:' +
+            response + ' ' + data +
+            '\n**\n'
         );
     } else { //otherwise (false), it was successfully tweeted, and we show it to the log.
-        //console.log('\n >Successfully Tweeted:\n' + tweetScene.replace(/,/g, '').replace(/"     "/g, '') + '\n__\n');
+        console.log('>successfully tweeted:\n\n' + tweetScene.toString().replace(/,/g, '').replace(/"     "/g, '') + '\n__\n');
     }
 }
 
@@ -257,48 +349,55 @@ function startLoop(loopTime) {
     //log timers
     var bufferAmount = 0;
     var bufferTime = loopTime;
-    process.stdout.write('Loop Timer: ' + bufferTime + ' seconds'); //process.stdout.write is used so that the timer counts down without making a new line
+    //process.stdout.write('loop timer: ' + bufferTime + ' seconds'); //process.stdout.write is used so that the timer counts down without making a new line
 
     //countdown and loop re-starter
     var countdownTimer = setInterval(function () {
         readline.cursorTo(process.stdout, 0);
         bufferTime -= 1;
-        process.stdout.write('Loop Timer: ' + bufferTime);
+        process.stdout.write('loop timer: ' + bufferTime + ' seconds');
         bufferAmount += 1;
 
         if (bufferTime <= 0) {
             clearInterval(countdownTimer);
             readline.clearLine(process.stdout);
             readline.cursorTo(process.stdout, 0);
-            console.log('Buffer Time: ' + bufferAmount + ' seconds\n'); //prints out how much time was buffered between the loop (logging purposes)
+            console.log('buffer time: ' + bufferAmount + ' seconds\n'); //prints out how much time was buffered between the loop (logging purposes)
             loopN += 1; //adds to total loop count since the program started looping
             startLoop(loopTime); //starts the loop over again (once bufferTime has run out)
         }
     }, 1000);
 }
 
+function loopInput() {
+    rl.question(`loop duration in minutes? (ex. 60m = 60 minutes, 30s = 30 seconds): `, (input) => {
+        if (input.includes('s') || input.includes('m')) {
+            if (input.includes('m')) { //if inputer includes 'm' in their input, we treat the input as minutes and must convert it to seconds.
+                loopNum = input.replace(/\D/g,'') * 60; //'startLoop' function relies on an input in seconds. this multiplies the inputer's 'minute' number by 60 to turn it from minutes to seconds.
+            } else if (input.includes('s')) { //if inputer includes 's' in their input, we treat the input as seconds.
+                loopNum = input.replace(/\D/g,''); //sets 'loopNum' to 'input' with all letters replaced
+            }
+            startLoop(loopNum); //begins the loop (it starts the infinite loop that continues to tweet on a NodeJS server. the number in startLoop() is fed into the startLoop() function above, and that loop uses the createNature() function to create the randomized scene. The chain gets more complicated as you dig into the functions, but as you wrap your head around it, the chain starts to make more sense as you realize each of the fucntions' purpose.)
+            rl.close();
+        } else {
+            console.log("incorrect input. include 'm' or 's' in your input to denote if it is in minutes or seconds.");
+            loopInput();
+        }
+    })
+}
+
+//
 // main
+//
 console.log ( //(logging purposes)
     '********** tinynaturebot v1.2 **********\n' +
     '                  init                  \n'
 );
-//allows the console to ask a question
-const rl = readline.createInterface({
+
+const rl = readline.createInterface({ //allows the console to ask a question
     input: process.stdin,
     output: process.stdout
 });
 
 var loopNum = 0;
-rl.question(`loop duration in minutes? (ex. 60m = 60 minutes, 30s = 30 seconds): `, (input) => {
-    if (input.includes('s') || input.includes('m')) {
-        if (input.includes('m')) { //if inputer includes 'm' in their input, we treat the input as minutes and must convert it to seconds.
-            loopNum = input.replace(/\D/g,'') * 60; //'startLoop' function relies on an input in seconds. this multiplies the inputer's 'minute' number by 60 to turn it from minutes to seconds.
-        } else if (input.includes('s')) { //if inputer includes 's' in their input, we treat the input as seconds.
-            loopNum = input.replace(/\D/g,''); //sets 'loopNum' to 'input' with all letters replaced
-        }
-        startLoop(loopNum); //begins the loop (it starts the infinite loop that continues to tweet on a NodeJS server. the number in startLoop() is fed into the startLoop() function above, and that loop uses the createNature() function to create the randomized scene. The chain gets more complicated as you dig into the functions, but as you wrap your head around it, the chain starts to make more sense as you realize each of the fucntions' purpose.)
-        rl.close();
-    } else {
-        console.log("incorrect input. include 'm' or 's' in your input to denote if it is in minutes or seconds.");
-    }
-})
+loopInput(); //asks the user for a proper input, and then begins the loop with the provided input.
